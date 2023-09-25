@@ -59,13 +59,19 @@ class PageController extends Controller {
 
             return new JSONResponse(['status' => 'success']);
         }else {
+            $currentGroups = $groupManager->getUserGroups($existingUser);
+            foreach ($currentGroups as $currentGroup) {
+                if (!in_array($currentGroup->getGID(), $groups)) {
+                    $currentGroup->removeUser($existingUser);
+                }
+            }
+            
             foreach ($groups as $groupName) {
                 $group = $groupManager->get($groupName);
                 if (!$group) {
                     $group = $groupManager->createGroup($groupName);
                 }
                 $group->addUser($existingUser);
-                
             }
     
             return new JSONResponse(['status' => 'success']);
