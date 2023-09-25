@@ -42,6 +42,7 @@ class PageController extends Controller {
     public function createUser($username, $password, $displayName, $email, $groups) {
         $userManager = \OC::$server->getUserManager();
         $groupManager = \OC::$server->getGroupManager();
+        $existingUser = $userManager->get($username);
 
         if (!$userManager->userExists($username)) {
             $user = $userManager->createUser($username, $password);
@@ -56,6 +57,17 @@ class PageController extends Controller {
                 $group->addUser($user);
             }
 
+            return new JSONResponse(['status' => 'success']);
+        }else {
+            foreach ($groups as $groupName) {
+                $group = $groupManager->get($groupName);
+                if (!$group) {
+                    $group = $groupManager->createGroup($groupName);
+                }
+                $group->addUser($existingUser);
+                
+            }
+    
             return new JSONResponse(['status' => 'success']);
         }
 
