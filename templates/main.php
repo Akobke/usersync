@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 declare(strict_types=1);
 script('usersync', 'script');
+script('core', 'OC-dialogs');
+script('core', 'jquery.fileupload');
 ?>
 <style>
     body, html {
@@ -44,7 +46,7 @@ script('usersync', 'script');
     }
 
     
-    #uploadButton {
+    #selectFileButton {
         width: 100%;
         padding: 10px;
         background-color: #007bff;
@@ -55,10 +57,24 @@ script('usersync', 'script');
         transition: background-color 0.3s ease;
     }
 
-    #uploadButton:hover {
+    #selectFileButton: hover {
         background-color: #0056b3;
     }
 
+    #browseButton {
+        width: 100%;
+        padding: 10px;
+        background-color: #008bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #browseButton: hover {
+        background-color: #0056b3;
+    }
     
     #csvOutput {
         width: 100%;
@@ -70,13 +86,17 @@ script('usersync', 'script');
         color: #fff;
         resize: none; 
     }
+    #csvFile {
+        display: none;
+    }
 </style>
 
 <div class="container">
     <form id="csvUploadForm">
         <label for="csvFile">Upload CSV:</label>
         <input type="file" name="csvFile" id="csvFile" accept=".csv">
-        <button type="button" id="uploadButton">Upload and Display</button>
+	<button type="button" id="selectFileButton">Local CSV Upload</button>
+	<button type="button" id="browseButton">Nextcloud CSV Upload</button>
     </form>
     <textarea id="csvOutput"></textarea>
 </div>

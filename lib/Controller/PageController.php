@@ -40,44 +40,37 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     public function createUser($username, $password, $displayName, $email, $groups) {
-        $userManager = \OC::$server->getUserManager();
-        $groupManager = \OC::$server->getGroupManager();
-        $existingUser = $userManager->get($username);
+    	$userManager = \OC::$server->getUserManager();
+    	$groupManager = \OC::$server->getGroupManager();
+    	$userCreated = false;
+    	$userUpdated = false;
 
-        if (!$userManager->userExists($username)) {
-            $user = $userManager->createUser($username, $password);
-            $user->setDisplayName($displayName);
-            $user->setEMailAddress($email);
+    	if (!$userManager->userExists($username)) {
+        	$user = $userManager->createUser($username, $password);
+        	$user->setDisplayName($displayName);
+        	$user->setEMailAddress($email);
+        	$userCreated = true;
+    	} else {
+        	$user = $userManager->get($username);
+        	$userUpdated = true;
+    	}
 
-            foreach ($groups as $groupName) {
-                $group = $groupManager->get($groupName);
-                if (!$group) {
-                    $group = $groupManager->createGroup($groupName);
-                }
-                $group->addUser($user);
-            }
+    	foreach ($groups as $groupName) {
+        	$group = $groupManager->get($groupName);
+        	if (!$group) {
+            		$group = $groupManager->createGroup($groupName);
+        	}
+        	if (!$group->inGroup($user)) {
+            		$group->addUser($user);
+        	}
+    	}
 
-            return new JSONResponse(['status' => 'success']);
-        }else {
-            $currentGroups = $groupManager->getUserGroups($existingUser);
-            foreach ($currentGroups as $currentGroup) {
-                if (!in_array($currentGroup->getGID(), $groups)) {
-                    $currentGroup->removeUser($existingUser);
-                }
-            }
-            
-            foreach ($groups as $groupName) {
-                $group = $groupManager->get($groupName);
-                if (!$group) {
-                    $group = $groupManager->createGroup($groupName);
-                }
-                $group->addUser($existingUser);
-            }
-    
-            return new JSONResponse(['status' => 'success']);
-        }
-
-        return new JSONResponse(['status' => 'error', 'message' => 'User already exists']);
+    	return new JSONResponse([
+        	'status' => 'success',
+        	'userCreated' => $userCreated,
+        	'userUpdated' => $userUpdated
+    	]);
     }
+
 
 }
