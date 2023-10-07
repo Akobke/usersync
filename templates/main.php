@@ -32,6 +32,7 @@ script('core', 'jquery.fileupload');
 
     
     label {
+        color: black;
         font-weight: bold;
         display: block;
         margin-bottom: 10px;
@@ -89,10 +90,15 @@ script('core', 'jquery.fileupload');
     #csvFile {
         display: none;
     }
+    #groupPrefix {
+        width: 100%;
+    }
 </style>
 
 <div class="container">
     <form id="csvUploadForm">
+        <label for="groupPrefix">Group Prefix:</label>
+        <input type="text" id="groupPrefix" placeholder="Enter prefix (e.g., FA23)">
         <label for="csvFile">Upload CSV:</label>
         <input type="file" name="csvFile" id="csvFile" accept=".csv">
 	<button type="button" id="selectFileButton">Local CSV Upload</button>
