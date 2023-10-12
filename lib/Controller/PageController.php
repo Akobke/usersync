@@ -78,5 +78,23 @@ class PageController extends Controller {
         return new JSONResponse(['status' => 'error', 'message' => 'User already exists']);
     }
 
+        /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function removeAllGroups() {
+        $groupManager = \OC::$server->getGroupManager();
+        $allGroups = $groupManager->search('');
+
+        foreach ($allGroups as $group) {
+            $groupId = $group->getGID();
+            // Do not remove the 'admin' group
+            if ($groupId !== 'admin') {
+                $group->delete();
+            }
+        }
+
+        return new JSONResponse(['status' => 'success']);
+    }
 
 }

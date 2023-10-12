@@ -73,6 +73,26 @@ script('core', 'jquery.fileupload');
         transition: background-color 0.3s ease;
     }
 
+    #ncLoadMappingsButton {
+        width: 100%;
+        padding: 10px;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #localLoadMappingsButton {
+        width: 100%;
+        padding: 10px;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
     #browseButton: hover {
         background-color: #0056b3;
     }
@@ -99,10 +119,17 @@ script('core', 'jquery.fileupload');
     <form id="csvUploadForm">
         <label for="groupPrefix">Group Prefix:</label>
         <input type="text" id="groupPrefix" placeholder="Enter prefix (e.g., FA23)">
+        
+        <label for="groupMappingFile">Upload Group Mappings CSV:</label>
+        <input type="file" name="groupMappingFile" id="groupMappingFile" accept=".csv">
+        
+        <button type="button" id="ncLoadMappingsButton">Nextcloud Mapping Upload</button>
+        <button type="button" id="loadMappingsButton">Load Mappings</button>
+
         <label for="csvFile">Upload CSV:</label>
         <input type="file" name="csvFile" id="csvFile" accept=".csv">
-	<button type="button" id="selectFileButton">Local CSV Upload</button>
-	<button type="button" id="browseButton">Nextcloud CSV Upload</button>
+	    <button type="button" id="selectFileButton">Local CSV Upload</button>
+	    <button type="button" id="browseButton">Nextcloud CSV Upload</button>
     </form>
     <textarea id="csvOutput"></textarea>
 </div>
