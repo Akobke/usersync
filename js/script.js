@@ -74,6 +74,43 @@ function removeAllGroups() {
     });
 }
 
+function updateGroupNamesBasedOnMappings() {
+    fetch('getallgroups')
+    .then(response => response.json())
+    .then(allGroups => {
+        allGroups.forEach(groupName => {
+            const prefix = groupName.substring(0, 5);
+            const actualGroupName = groupName.substring(5,groupName.length); // Assuming a "-" after the prefix
+            console.log('Found: ',actualGroupName)
+            console.log('Groupname: ',groupName)
+            console.log("Mapping:",groupMappings[actualGroupName])
+            console.log(groupMappings)
+            if (groupMappings[actualGroupName]) {
+                console.log('Working2')
+                const newGroupName = prefix + "-" + groupMappings[actualGroupName];
+
+                // Rename the group
+                fetch('renamegroup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        oldGroupName: groupName,
+                        newGroupName: newGroupName
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'error') {
+                        console.error(data.message);
+                    }
+                });
+            }
+        });
+    });
+}
+
 document.getElementById('selectFileButton').addEventListener('click', function() {
     // Create a hidden file input element
     const fileInput = document.createElement('input');
@@ -124,6 +161,7 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
         reader.onload = function(event) {
             const csvContent = event.target.result;
             const rows = csvContent.split('\n');
+            groupMappings = {}; // Reset the groupMappings
             rows.forEach(row => {
                 const columns = row.split(',');
                 if (columns.length >= 2) {
@@ -133,6 +171,7 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
                 }
             });
             alert('Group mappings loaded successfully!');
+            updateGroupNamesBasedOnMappings();
         };
         reader.readAsText(file);
     } else {

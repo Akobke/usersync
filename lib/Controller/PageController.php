@@ -96,5 +96,55 @@ class PageController extends Controller {
 
         return new JSONResponse(['status' => 'success']);
     }
+        /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getAllGroups() {
+        $groupManager = \OC::$server->getGroupManager();
+        $allGroups = $groupManager->search('');
+
+        $groupNames = [];
+        foreach ($allGroups as $group) {
+            $groupNames[] = $group->getGID();
+        }
+
+        return new JSONResponse($groupNames);
+    }
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function renameGroup($oldGroupName, $newGroupName) {
+        $groupManager = \OC::$server->getGroupManager();
+        $oldGroup = $groupManager->get($oldGroupName);
+
+        if ($oldGroup) {
+            // Check if the new group name already exists
+            if (!$groupManager->groupExists($newGroupName)) {
+                // Create the new group
+                $newGroup = $groupManager->createGroup($newGroupName);
+
+                // Move all users from the old group to the new group
+                $usersInOldGroup = $oldGroup->getUsers();
+                foreach ($usersInOldGroup as $user) {
+                    $newGroup->addUser($user);
+                    $oldGroup->removeUser($user);
+                }
+
+                // Delete the old group
+                $oldGroup->delete();
+
+                return new JSONResponse(['status' => 'success']);
+            } else {
+                return new JSONResponse(['status' => 'error', 'message' => 'New group name already exists']);
+            }
+        } else {
+            return new JSONResponse(['status' => 'error', 'message' => 'Old group not found']);
+        }
+    }
+
 
 }
+

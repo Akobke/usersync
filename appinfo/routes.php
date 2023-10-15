@@ -22,7 +22,17 @@ return [
 			'verb' => 'OPTIONS', 'requirements' => ['path' => '.+']],
 		['name' => 'page#createUser', 'url' => '/createuser', 'verb' => 'POST'],
 		['name' => 'page#get_groups_csv', 'url' => '/get_groups_csv', 'verb' => 'GET'],
-        ['name' => 'page#removeAllGroups', 'url' => '/removeallgroups', 'verb' => 'POST']
+        ['name' => 'page#removeAllGroups', 'url' => '/removeallgroups', 'verb' => 'POST'],
+		[
+			'name' => 'page#getAllGroups',
+			'url' => '/getallgroups',
+			'verb' => 'GET'
+		],
+		[
+			'name' => 'page#renameGroup',
+			'url' => '/renamegroup',
+			'verb' => 'POST'
+		]
 	]
 	
 ];
