@@ -81,13 +81,15 @@ function updateGroupNamesBasedOnMappings() {
         allGroups.forEach(groupName => {
             const prefix = groupName.substring(0, 5);
             const actualGroupName = groupName.substring(5,groupName.length); // Assuming a "-" after the prefix
+            //console.log(allGroups)
             console.log('Found: ',actualGroupName)
             console.log('Groupname: ',groupName)
-            console.log("Mapping:",groupMappings[actualGroupName])
             console.log(groupMappings)
+            console.log("Mapping:",groupMappings[actualGroupName])
+            console.log("--------------------------------------------")
             if (groupMappings[actualGroupName]) {
                 console.log('Working2')
-                const newGroupName = prefix + "-" + groupMappings[actualGroupName];
+                const newGroupName = prefix + groupMappings[actualGroupName];
 
                 // Rename the group
                 fetch('renamegroup', {
@@ -157,6 +159,7 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
     const fileInput = document.getElementById('groupMappingFile');
     const file = fileInput.files[0];
     if (file) {
+        
         const reader = new FileReader();
         reader.onload = function(event) {
             const csvContent = event.target.result;
