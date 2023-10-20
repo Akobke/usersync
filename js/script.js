@@ -1,7 +1,11 @@
 let groupMappings = {};
-
+let userUploadedMappings = false;
+let groupPrefix = '';
+import { getCurrentUser } from '@nextcloud/auth'
+console.log(getCurrentUser())
 function processCSVContent(csvContent, groupPrefix) {
     // Clear the output textarea
+    
     document.getElementById('csvOutput').value = "";
 
     const rows = csvContent.split('\n');
@@ -51,7 +55,6 @@ function processCSVContent(csvContent, groupPrefix) {
                     userUpdatedCount++;
                 }
                 // Update the output
-                document.getElementById('csvOutput').value = `Number of users added: ${userCreatedCount}\nNumber of users updated: ${userUpdatedCount}`;
             } else {
                 console.error(data.message);
                 userUpdatedCount++;
@@ -61,6 +64,7 @@ function processCSVContent(csvContent, groupPrefix) {
             console.error('Error:', error);
         });
     });
+    document.getElementById('csvOutput').value = `Number of users added: ${userCreatedCount}\nNumber of users updated: ${userUpdatedCount}`;
 }
 
 function removeAllGroups() {
@@ -116,7 +120,9 @@ function updateGroupNamesBasedOnMappings() {
 document.getElementById('selectFileButton').addEventListener('click', function() {
     // Create a hidden file input element
     const fileInput = document.createElement('input');
-	const groupPrefix = document.getElementById('groupPrefix').value;
+    if(groupPrefix !== ''){
+	    groupPrefix = document.getElementById('groupPrefix').value;
+    }
     fileInput.type = 'file';
     fileInput.accept = '.csv';
     fileInput.style.display = 'none';
@@ -144,7 +150,12 @@ document.getElementById('selectFileButton').addEventListener('click', function()
     fileInput.click();
 });
 
+document.getElementById('defaultsTest').addEventListener('click', function() {
+    checkForDefaults();
+})
+
 document.getElementById('browseButton').addEventListener('click', function() {
+
     OC.dialogs.filepicker("Select a CSV user list file", function(targetPath) {
         fetch(OC.linkToRemoteBase('files' + targetPath))
         .then(response => response.text())
@@ -158,23 +169,14 @@ document.getElementById('browseButton').addEventListener('click', function() {
 document.getElementById('loadMappingsButton').addEventListener('click', function() {
     const fileInput = document.getElementById('groupMappingFile');
     const file = fileInput.files[0];
+    console.log("mappingsButton")
     if (file) {
-        
+        userUploadedMappings = true;
         const reader = new FileReader();
         reader.onload = function(event) {
-            const csvContent = event.target.result;
-            const rows = csvContent.split('\n');
-            groupMappings = {}; // Reset the groupMappings
-            rows.forEach(row => {
-                const columns = row.split(',');
-                if (columns.length >= 2) {
-                    const originalName = columns[0].trim();
-                    const mappedName = columns[1].trim();
-                    groupMappings[originalName] = mappedName;
-                }
-            });
-            alert('Group mappings loaded successfully!');
-            updateGroupNamesBasedOnMappings();
+            loadMappings(event.target.result);
+            uploadMappings(event.target.result)
+            console.log(event.target.result)
         };
         reader.readAsText(file);
     } else {
@@ -182,13 +184,70 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
     }
 });
 
+function uploadMappings(content){
+    let u = getCurrentUser()
+    console.log("Upload Mapping")
+    const headers = new Headers({
+        'Authorization': u.getRequestToken,
+        'Content-Type': 'text/csv', // Adjust the content type as needed
+    });
+
+    fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'), {
+        method: "PUT",
+        body: content,
+        headers: headers,
+    }).then(response => {
+        if (response.status === 201) {
+            console.log('File uploaded successfully.');
+        } else {
+            console.error('File upload failed with status: ' + response.status);
+        }
+    })
+}
+
+function loadMappings(content){
+    console.log("Load Mappings")
+    const rows = content.split('\n');
+    groupMappings = {}; // Reset the groupMappings
+    rows.forEach(row => {
+        const columns = row.split(',');
+        if (columns.length >= 2) {
+            const originalName = columns[0].trim();
+            const mappedName = columns[1].trim();
+            groupMappings[originalName] = mappedName;
+        }
+    });
+    alert('Group mappings loaded successfully!');
+    updateGroupNamesBasedOnMappings();
+}
 document.getElementById('ncLoadMappingsButton').addEventListener('click', function() {
     OC.dialogs.filepicker("Select a CSV mapping file", function(targetPath) {
         fetch(OC.linkToRemoteBase('files' + targetPath))
         .then(response => response.text())
         .then(processCSVContent)
+        .then(console.log(targetPath))
+        .then()
         .catch(error => {
             console.error('Error fetching the file:', error);
         });
     }, false, ["text/csv"], true);
 });
+
+function checkForDefaults(){
+    fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'))
+    .then(response => response.text())
+    .then(data => {
+        loadMappings(data)
+    })
+    .catch(error => {
+        console.log("No file found")
+    })
+    fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupprefix.txt'))
+    .then(response => response.text())
+    .then(data => {
+        groupMappings = data;
+    })
+    .catch(error => {
+        console.log("No file found")
+    })
+}

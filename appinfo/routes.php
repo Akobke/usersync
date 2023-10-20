@@ -32,6 +32,11 @@ return [
 			'name' => 'page#renameGroup',
 			'url' => '/renamegroup',
 			'verb' => 'POST'
+		],
+		[
+			'name' => 'page#getDefaults',
+			'url' => '/getdefaults',
+			'verb' => 'POST'
 		]
 	]
 	

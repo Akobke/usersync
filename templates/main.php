@@ -130,6 +130,7 @@ script('core', 'jquery.fileupload');
         <input type="file" name="csvFile" id="csvFile" accept=".csv">
 	    <button type="button" id="selectFileButton">Local CSV Upload</button>
 	    <button type="button" id="browseButton">Nextcloud CSV Upload</button>
+        <button type="button" id="defaultsTest">defaultsTest</button>
     </form>
     <textarea id="csvOutput"></textarea>
 </div>

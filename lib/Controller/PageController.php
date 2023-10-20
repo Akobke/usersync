@@ -11,8 +11,12 @@ use OCA\usersync\AppInfo\Application;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\Util;
+use OCP\Files\Node;
+use OCP\Files\NotFoundException;
+
 
 class PageController extends Controller {
+    
 
     public function __construct($AppName, IRequest $request){
         parent::__construct($AppName, $request);
@@ -43,6 +47,7 @@ class PageController extends Controller {
         $userManager = \OC::$server->getUserManager();
         $groupManager = \OC::$server->getGroupManager();
         $existingUser = $userManager->get($username);
+        
         if (!$userManager->userExists($username)) {
             $user = $userManager->createUser($username, $password);
             $user->setDisplayName($displayName);
@@ -144,6 +149,11 @@ class PageController extends Controller {
             return new JSONResponse(['status' => 'error', 'message' => 'Old group not found']);
         }
     }
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    
 
 
 }
