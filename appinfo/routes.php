@@ -34,9 +34,15 @@ return [
 			'verb' => 'POST'
 		],
 		[
-			'name' => 'page#getDefaults',
-			'url' => '/getdefaults',
-			'verb' => 'POST'
+			'name' => 'page#getUserAuth',
+			'url' => '/getuserauth',
+			'verb' => 'GET'
+		],
+		[
+		'name' => 'author_api#preflighted_cors',
+		'url' => '/api/1.0/{path}',
+		'verb' => 'OPTIONS',
+		'requirements' => array('path' => '.+')
 		]
 	]
 	

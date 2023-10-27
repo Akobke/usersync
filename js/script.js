@@ -1,8 +1,8 @@
 let groupMappings = {};
 let userUploadedMappings = false;
 let groupPrefix = '';
-import { getCurrentUser } from '@nextcloud/auth'
-console.log(getCurrentUser())
+let token = '';
+
 function processCSVContent(csvContent, groupPrefix) {
     // Clear the output textarea
     
@@ -152,6 +152,7 @@ document.getElementById('selectFileButton').addEventListener('click', function()
 
 document.getElementById('defaultsTest').addEventListener('click', function() {
     checkForDefaults();
+    getAuthToken('admin', 'admin')
 })
 
 document.getElementById('browseButton').addEventListener('click', function() {
@@ -174,7 +175,7 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
         userUploadedMappings = true;
         const reader = new FileReader();
         reader.onload = function(event) {
-            loadMappings(event.target.result);
+            //loadMappings(event.target.result);
             uploadMappings(event.target.result)
             console.log(event.target.result)
         };
@@ -185,22 +186,29 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
 });
 
 function uploadMappings(content){
-    let u = getCurrentUser()
+    //
     console.log("Upload Mapping")
     const headers = new Headers({
-        'Authorization': u.getRequestToken,
+        'Authorization': 'Basic '  + btoa('admin' + ":" + 'admin'),
         'Content-Type': 'text/csv', // Adjust the content type as needed
+        
     });
-
-    fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'), {
+    //OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv')
+    //http://nextcloud.local/index.php/apps/files/files/6247?dir=/UserSyncConfig/groupmapping.csv
+    fetch("http://nextcloud.local/remote.php/dav/files/admin/UserSyncConfig/groupmapping.csv", {
         method: "PUT",
+        mode: 'same-origin',
         body: content,
-        headers: headers,
+        headers: {
+            'Authorization': 'Basic '  + btoa('admin' + ":" + 'admin'),
+            'Content-Type': 'text/csv', // Adjust the content type as needed
+        }
     }).then(response => {
         if (response.status === 201) {
             console.log('File uploaded successfully.');
         } else {
             console.error('File upload failed with status: ' + response.status);
+            console.log(btoa('admin' + ':' + 'admin'))
         }
     })
 }
@@ -234,10 +242,12 @@ document.getElementById('ncLoadMappingsButton').addEventListener('click', functi
 });
 
 function checkForDefaults(){
+    //getUserAuth();
     fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'))
     .then(response => response.text())
     .then(data => {
-        loadMappings(data)
+        console.log(data)
+        //loadMappings(data)
     })
     .catch(error => {
         console.log("No file found")
@@ -245,9 +255,14 @@ function checkForDefaults(){
     fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupprefix.txt'))
     .then(response => response.text())
     .then(data => {
-        groupMappings = data;
+        //groupMappings = data;
     })
     .catch(error => {
         console.log("No file found")
     })
 }
+
+
+
+
+

@@ -15,6 +15,7 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 
 
+
 class PageController extends Controller {
     
 
@@ -153,7 +154,12 @@ class PageController extends Controller {
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    
+    public function getUserAuth(){
+        $user = \OC::$server->getUserSession()->getUser();
+        $token = $user->getUID();
+        return new JSONResponse(['status' => 'success',
+                                'token' => $token]);
+    }
 
 
 }
