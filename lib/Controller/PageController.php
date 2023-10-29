@@ -149,7 +149,7 @@ class PageController extends Controller {
         } else {
             return new JSONResponse(['status' => 'error', 'message' => 'Old group not found']);
         }
-
+    }
 
 
 }
