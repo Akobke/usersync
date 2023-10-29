@@ -149,17 +149,7 @@ class PageController extends Controller {
         } else {
             return new JSONResponse(['status' => 'error', 'message' => 'Old group not found']);
         }
-    }
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    public function getUserAuth(){
-        $user = \OC::$server->getUserSession()->getUser();
-        $token = $user->getUID();
-        return new JSONResponse(['status' => 'success',
-                                'token' => $token]);
-    }
+
 
 
 }
