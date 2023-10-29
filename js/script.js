@@ -2,34 +2,46 @@ let groupMappings = {};
 let userUploadedMappings = false;
 let groupPrefix = '';
 let token = '';
+let fileFormatSelection = "Default";
 
-function processCSVContent(csvContent, groupPrefix) {
-    // Clear the output textarea
-    
-    document.getElementById('csvOutput').value = "";
 
-    const rows = csvContent.split('\n');
+function processContent(content, mappings, delimiter = ":", rowSkips = 0) {
+    console.log(content);
+    const processedUsers = [];
+    //const rows = content.trim().split("\n"); 
+    const rows = content.split("\n"); 
 
-    // Initialize counters for users created and updated
-    let userCreatedCount = 0;
-    let userUpdatedCount = 0;
+    for (const row of rows) {
+        console.log("Reading row: ",row);
+        const columns = row.split(delimiter);
+        const username = mappings.username(columns);
+        const displayName = mappings.displayName(columns);
+        const email = mappings.email(columns);
+        const group1 = mappings.group1(columns);
 
-    rows.forEach(row => {
-        const columns = row.split(':'); // Split by ":"
+        console.log("Display name: ", displayName);
+        console.log("group1: ", group1);
+        
+        // Handling of multiple majors
+        const rawGroup2 = mappings.group2 ? mappings.group2(columns) : null;
+        const additionalGroups = rawGroup2 
+            ? rawGroup2.split('/').map(part => {
+                const trimmedPart = part.trim();
+                return groupPrefix + "-" + (groupMappings[trimmedPart] || trimmedPart);
+              })
+            : [];
 
-        const username = columns[5];
-        const displayName = columns[6];
-        const email = columns[5] + "@fiu.edu";
-        const group1 = groupPrefix + "-" + (groupMappings[columns[0] + columns[1]] || columns[0] + columns[1]);
-        const group2 = (groupMappings[columns[10]] || columns[10]);
+        console.log(additionalGroups);
 
-        // Split group2 by "/" and trim each part, then map to the groupMappings
-        const additionalGroups = group2.split('/').map(part => {
-            const trimmedPart = part.trim();
-            return groupPrefix + "-" + (groupMappings[trimmedPart] || trimmedPart);
-        });
+        const user = {
+            username: username,
+            displayName: displayName,
+            email: email,
+            groups: [group1, ...additionalGroups]
+        };
+        
+        console.log("Adding user: ",username,", displayName: ", displayName, ", email: ",email,", group1: ", group1);
 
-        // Send this data to the server to create the user and assign groups
         fetch('createuser', {
             method: 'POST',
             headers: {
@@ -44,27 +56,63 @@ function processCSVContent(csvContent, groupPrefix) {
             })
         })
         .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                if (data.userCreated) {
-                    // Increment the user created count
-                    userCreatedCount++;
-                }
-                if (data.userUpdated) {
-                    // Increment the user updated count
-                    userUpdatedCount++;
-                }
-                // Update the output
-            } else {
-                console.error(data.message);
-                userUpdatedCount++;
-            }
-        })
         .catch(error => {
             console.error('Error:', error);
         });
-    });
-    document.getElementById('csvOutput').value = `Number of users added: ${userCreatedCount}\nNumber of users updated: ${userUpdatedCount}`;
+
+        processedUsers.push(user);
+    }
+    //Send this data to the server to create the user and assign groups
+    return processedUsers;
+}
+
+function processDefaultCSV(content) {
+    const mappings = {
+        username: columns => columns[5],
+        displayName: columns => columns[6],
+        email: columns => columns[5] + "@fiu.edu",
+        group1: columns => groupPrefix + "-" + (groupMappings[columns[0] + columns[1]] || columns[0] + columns[1]),
+        group2: columns => groupMappings[columns[10]] || columns[10]
+    };
+    console.log("The following users were added or updated:")
+    console.log(processContent(content, mappings));
+}
+
+// Function to process Canvas CSV
+function processCanvasCSV(content) {
+    const mappings = {
+        username: columns => columns[3],
+        displayName: columns => columns[0],
+        email: columns => columns[3] + "@fiu.edu",
+        group1: columns => (groupPrefix + "-" + columns[4].split('-')[2] + columns[4].split('-')[3]).toLowerCase(),
+        group2: columns => null
+    };
+    console.log("File column mappings: ", mappings.username(0))
+    processContent(content, mappings, ";", 2);
+}
+
+// Function to process Panthersoft XLSX
+function processPanthersoftXLSX(content, filename) {
+    const mappings = {
+        username: columns => columns[2].split("@")[0],
+        displayName: columns =>  columns[4].substring(0,columns[4].length-1)+ " "+columns[3].substring(1),
+        email: columns => columns[2],
+        group1: columns => "-"+filename.substring(0,filename.length-5).toLowerCase(),
+        group2: columns => columns[7]
+    };
+    processContent(content, mappings, ",");
+}
+
+// Function to process CAPGroupsXLSX
+function processCAPGroupsXLSX(content) {
+    const mappings = {
+        username: columns => columns[7].split("@")[0],
+        displayName: columns => columns[9].substring(0,columns[9].length-1) + " " + columns[8].substring(1),
+        email: columns => columns[7],
+        group1: columns => "-cap2",
+        group2: columns => columns[12]
+    };
+    processContent(content, mappings, ",");
 }
 
 function removeAllGroups() {
@@ -119,10 +167,10 @@ document.getElementById('selectFileButton').addEventListener('click', function()
     // Create a hidden file input element
     const fileInput = document.createElement('input');
     if(groupPrefix !== ''){
-	    groupPrefix = document.getElementById('groupPrefix').value;
+        groupPrefix = document.getElementById('groupPrefix').value;
     }
     fileInput.type = 'file';
-    fileInput.accept = '.csv';
+    fileInput.accept = '.csv, .xlsx';
     fileInput.style.display = 'none';
 
     // Append it to the body (required for it to be clickable)
@@ -132,12 +180,49 @@ document.getElementById('selectFileButton').addEventListener('click', function()
     fileInput.addEventListener('change', function() {
         const file = fileInput.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const csvContent = event.target.result;
-                processCSVContent(csvContent,groupPrefix);
-            };
-            reader.readAsText(file);
+            const fileType = file.name.split('.').pop().toLowerCase();
+            if (fileType === 'csv') {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const csvContent = event.target.result;
+                    switch (fileFormatSelection) {
+                        case 'Default':
+                            console.log("Processing default csv...");
+                            processDefaultCSV(csvContent);
+                            break;
+                        case 'Canvas':
+                            console.log("Processing canvas csv...");
+                            processCanvasCSV(csvContent);
+                            break;
+                        case 'Panthersoft':
+                            // We assume that if it's a Panthersoft CSV, it's a mistake since Panthersoft is typically xlsx.
+                            alert('Panthersoft files should be in .xlsx format.');
+                            break;
+                        case 'CAP2Groups':
+                            // We assume that if it's a CAP2Groups CSV, it's a mistake since CAP2Groups is typically xlsx.
+                            alert('CAP2Groups files should be in .xlsx format.');
+                            break;
+                        default:
+                            alert('Unsupported file selection format.');
+                    }
+                };
+                reader.readAsText(file);
+            } else if (fileType === 'xlsx') {
+                xlsxToCSVString(file, function(csvContent) {
+                    switch (fileFormatSelection) {
+                        case 'Panthersoft':
+                            processPanthersoftXLSX(csvContent, file.name);
+                            break;
+                        case 'CAP2Groups':
+                            processCAPGroupsXLSX(csvContent);
+                            break;
+                        default:
+                            alert('Selected xlsx format not supported for the current selection.');
+                    }
+                });
+            } else {
+                alert('Unsupported file type.');
+            }
         }
 
         // Clean up by removing the file input element after use
@@ -230,6 +315,16 @@ function checkForDefaults(){
     })
 }
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const fileFormatDropdown = document.getElementById('fileFormatSelect');
+
+    console.log('Initial File Format Selection:', fileFormatSelection);
+
+    fileFormatDropdown.addEventListener('change', function() {
+        fileFormatSelection = this.value;
+        console.log('New File Format Selection:', fileFormatSelection);
+    });
+});
 
 
 
