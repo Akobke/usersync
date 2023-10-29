@@ -115,6 +115,57 @@ function processCAPGroupsXLSX(content) {
     processContent(content, mappings, ",");
 }
 
+function xlsxToCSVString(file, callback) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, {type: 'binary'});
+
+        // Assuming your data is in the first sheet:
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        // Convert the worksheet to CSV:
+        let csvData = XLSX.utils.sheet_to_csv(worksheet);
+
+        // Split by newline to get rows:
+        const rows = csvData.split("\n");
+
+        // If the data has at least one row (the header), remove it:
+        if (rows.length > 0) {
+            rows.shift();
+        }
+
+        // Merge multiline cell values:
+        let mergedRows = [];
+        let tempRow = "";
+        rows.forEach(row => {
+            tempRow += row;
+            // Count quotation marks in the row:
+            const quoteCount = (tempRow.match(/"/g) || []).length;
+            // If the number of quotation marks is even, push the merged row to the result:
+            if (quoteCount % 2 === 0) {
+                mergedRows.push(tempRow);
+                tempRow = "";
+            }
+        });
+
+        // Preprocess each merged row:
+        const processedRows = mergedRows.map(row => 
+            // Remove newline characters within quotes:
+            row.replace(/"\s*\n\s*"/g, ' ')
+            // Convert to lowercase:
+            .toLowerCase()
+        );
+
+        // Join the processed rows back together:
+        csvData = processedRows.join("\n");
+
+        callback(csvData);
+    };
+    reader.readAsBinaryString(file);
+}
+
 function removeAllGroups() {
     fetch('/apps/myapp/removeallgroups', {
         method: 'POST'
