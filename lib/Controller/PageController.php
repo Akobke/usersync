@@ -154,7 +154,5 @@ class PageController extends Controller {
      * @NoCSRFRequired
      */
     
-
-
 }
 

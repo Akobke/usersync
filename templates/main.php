@@ -1,10 +1,16 @@
 <?php
 // SPDX-License-Identifier: AGPL-3.0-or-later
 declare(strict_types=1);
-script('usersync', 'script');
+script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
 script('core', 'OC-dialogs');
 script('core', 'jquery.fileupload');
+script('usersync', 'assets/xlsx.full.min');
+style('usersync', 'styles');
+script('usersync', 'script');
 ?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
 <style>
     body, html {
         height: 100%;
@@ -125,6 +131,14 @@ script('core', 'jquery.fileupload');
         
         <button type="button" id="ncLoadMappingsButton">Nextcloud Mapping Upload</button>
         <button type="button" id="loadMappingsButton">Load Mappings</button>
+
+        <label for="fileFormatSelect">Input File Source</label>
+        <select id="fileFormatSelect">
+            <option value="Default">Default</option>
+            <option value="Canvas">Canvas</option>
+            <option value="Panthersoft">Panthersoft</option>
+            <option value="CAP2Groups">CAP2Groups</option>
+        </select>
 
         <label for="csvFile">Upload CSV:</label>
         <input type="file" name="csvFile" id="csvFile" accept=".csv">
