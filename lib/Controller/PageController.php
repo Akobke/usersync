@@ -102,6 +102,21 @@ class PageController extends Controller {
 
         return new JSONResponse(['status' => 'success']);
     }
+    public function removeAllUsers() {
+        $userManager = \OC::$server->getUserManager();
+        $allUsers = $userManager->search('');
+    
+        foreach ($allUsers as $user) {
+            $username = $user->getUID();
+            // Skip the 'admin' user if it exists
+            if ($username !== 'admin') {
+                // Delete the user
+                $userManager->delete($username);
+            }
+        }
+    
+        return new JSONResponse(['status' => 'success']);
+    }
         /**
      * @NoAdminRequired
      * @NoCSRFRequired

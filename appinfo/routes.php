@@ -23,6 +23,7 @@ return [
 		['name' => 'page#createUser', 'url' => '/createuser', 'verb' => 'POST'],
 		['name' => 'page#get_groups_csv', 'url' => '/get_groups_csv', 'verb' => 'GET'],
         ['name' => 'page#removeAllGroups', 'url' => '/removeallgroups', 'verb' => 'POST'],
+		['name' => 'page#removeAllUsers', 'url' => '/removeallusers', 'verb' => 'POST'],
 		[
 			'name' => 'page#getAllGroups',
 			'url' => '/getallgroups',

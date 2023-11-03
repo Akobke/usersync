@@ -17,7 +17,7 @@ function processContent(content, mappings, delimiter = ":", rowSkips = 0) {
         const username = mappings.username(columns);
         const displayName = mappings.displayName(columns);
         const email = mappings.email(columns);
-        const group1 = mappings.group1(columns);
+        const group1 = groupPrefix + mappings.group1(columns);
 
         console.log("Display name: ", displayName);
         console.log("group1: ", group1);
@@ -27,7 +27,7 @@ function processContent(content, mappings, delimiter = ":", rowSkips = 0) {
         const additionalGroups = rawGroup2 
             ? rawGroup2.split('/').map(part => {
                 const trimmedPart = part.trim();
-                return groupPrefix + "-" + (groupMappings[trimmedPart] || trimmedPart);
+                return groupPrefix  + (groupMappings[trimmedPart] || trimmedPart);
               })
             : [];
 
@@ -71,7 +71,7 @@ function processDefaultCSV(content) {
         username: columns => columns[5],
         displayName: columns => columns[6],
         email: columns => columns[5] + "@fiu.edu",
-        group1: columns => groupPrefix + "-" + (groupMappings[columns[0] + columns[1]] || columns[0] + columns[1]),
+        group1: columns => (groupMappings[columns[0] + columns[1]] || columns[0] + columns[1]),
         group2: columns => groupMappings[columns[10]] || columns[10]
     };
     console.log("The following users were added or updated:")
@@ -84,7 +84,7 @@ function processCanvasCSV(content) {
         username: columns => columns[3],
         displayName: columns => columns[0],
         email: columns => columns[3] + "@fiu.edu",
-        group1: columns => (groupPrefix + "-" + columns[4].split('-')[2] + columns[4].split('-')[3]).toLowerCase(),
+        group1: columns => (groupPrefix + columns[4].split('-')[2] + columns[4].split('-')[3]).toLowerCase(),
         group2: columns => null
     };
     console.log("File column mappings: ", mappings.username(0))
@@ -109,7 +109,7 @@ function processCAPGroupsXLSX(content) {
         username: columns => columns[7].split("@")[0],
         displayName: columns => columns[9].substring(0,columns[9].length-1) + " " + columns[8].substring(1),
         email: columns => columns[7],
-        group1: columns => "-cap2",
+        group1: columns => "cap2",
         group2: columns => columns[12]
     };
     processContent(content, mappings, ",");
@@ -167,12 +167,22 @@ function xlsxToCSVString(file, callback) {
 }
 
 function removeAllGroups() {
-    fetch('/apps/myapp/removeallgroups', {
+    fetch('removeallgroups', {
         method: 'POST'
     }).then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
             console.log("All groups (except admin) removed successfully.");
+        }
+    });
+}
+function removeAllUsers() {
+    fetch('removeallusers', {
+        method: 'POST'
+    }).then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log("All users (except admin) removed successfully.");
         }
     });
 }
@@ -213,13 +223,30 @@ function updateGroupNamesBasedOnMappings() {
         });
     });
 }
+document.getElementById('removeAllGroups').addEventListener('click', function() {
+    removeAllGroups();
+    removeAllUsers();
+});
+
+function getGroupPrefix(){
+    console.log("Called group prefix")
+    if(document.getElementById('groupPrefix').value == ""){
+        console.log("Group Prefix is empty")
+        checkForDefaultPrefix();
+    }else{
+        console.log("Group Prefix not empty")
+        groupPrefix = document.getElementById('groupPrefix').value + "-";
+    }
+        
+}
 
 document.getElementById('selectFileButton').addEventListener('click', function() {
     // Create a hidden file input element
     const fileInput = document.createElement('input');
-    if(groupPrefix !== ''){
-        groupPrefix = document.getElementById('groupPrefix').value;
+    if(!userUploadedMappings){
+        checkForDefaultGroup();
     }
+    getGroupPrefix()
     fileInput.type = 'file';
     fileInput.accept = '.csv, .xlsx';
     fileInput.style.display = 'none';
@@ -310,6 +337,7 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
         reader.onload = function(event) {
             loadMappings(event.target.result);
             console.log(event.target.result)
+            updateGroupNamesBasedOnMappings();
         };
         reader.readAsText(file);
     } else {
@@ -329,37 +357,46 @@ function loadMappings(content){
             groupMappings[originalName] = mappedName;
         }
     });
-    alert('Group mappings loaded successfully!');
-    updateGroupNamesBasedOnMappings();
+    //alert('Group mappings loaded successfully!');
+    
 }
 document.getElementById('ncLoadMappingsButton').addEventListener('click', function() {
     OC.dialogs.filepicker("Select a CSV mapping file", function(targetPath) {
         fetch(OC.linkToRemoteBase('files' + targetPath))
         .then(response => response.text())
+        .then(userUploadedMappings = true)
+        .then(e => {
+            if(!userUploadedMappings){
+                checkForDefaultGroup()
+            }
+            getGroupPrefix()
+        })
         .then(processCSVContent)
-        .then(console.log(targetPath))
-        .then()
         .catch(error => {
             console.error('Error fetching the file:', error);
         });
     }, false, ["text/csv"], true);
 });
 
-function checkForDefaults(){
+function checkForDefaultGroup(){
     //getUserAuth();
     fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'))
     .then(response => response.text())
     .then(data => {
         console.log(data)
-        //loadMappings(data)
+        loadMappings(data)
     })
     .catch(error => {
         console.log("No file found")
     })
+    
+}
+
+function checkForDefaultPrefix(){
     fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupprefix.txt'))
     .then(response => response.text())
     .then(data => {
-        //groupMappings = data;
+        groupPrefix = data + "-"
     })
     .catch(error => {
         console.log("No file found")
@@ -377,6 +414,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
+function preChecks(){
 
+}
 
 

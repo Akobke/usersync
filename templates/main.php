@@ -145,6 +145,7 @@ script('usersync', 'script');
 	    <button type="button" id="selectFileButton">Local CSV Upload</button>
 	    <button type="button" id="browseButton">Nextcloud CSV Upload</button>
         <button type="button" id="defaultsTest">defaultsTest</button>
+        <button type="button" id="removeAllGroups">removeAllGroups</button>
     </form>
     <textarea id="csvOutput"></textarea>
 </div>
