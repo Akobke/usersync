@@ -223,10 +223,6 @@ function updateGroupNamesBasedOnMappings() {
         });
     });
 }
-document.getElementById('removeAllGroups').addEventListener('click', function() {
-    removeAllGroups();
-    removeAllUsers();
-});
 
 function getGroupPrefix(){
     console.log("Called group prefix")
@@ -311,16 +307,15 @@ document.getElementById('selectFileButton').addEventListener('click', function()
     fileInput.click();
 });
 
-document.getElementById('defaultsTest').addEventListener('click', function() {
-    checkForDefaults();
-})
 
 document.getElementById('browseButton').addEventListener('click', function() {
 
     OC.dialogs.filepicker("Select a CSV user list file", function(targetPath) {
         fetch(OC.linkToRemoteBase('files' + targetPath))
         .then(response => response.text())
-        .then(processCSVContent)
+        .then(data => {
+            
+        })
         .catch(error => {
             console.error('Error fetching the file:', error);
         });
@@ -340,8 +335,10 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
             updateGroupNamesBasedOnMappings();
         };
         reader.readAsText(file);
-    } else {
-        alert('Please select a valid CSV file.');
+    } else if(checkForDefaultGroup()) {
+        updateGroupNamesBasedOnMappings()
+    }else{
+        alert("Please provide a CSV file or have a default group mapping in the UserSyncConfig file")
     }
 });
 
@@ -365,13 +362,10 @@ document.getElementById('ncLoadMappingsButton').addEventListener('click', functi
         fetch(OC.linkToRemoteBase('files' + targetPath))
         .then(response => response.text())
         .then(userUploadedMappings = true)
-        .then(e => {
-            if(!userUploadedMappings){
-                checkForDefaultGroup()
-            }
-            getGroupPrefix()
+        .then(data => {
+            console.log(data)
+            loadMappings(data)
         })
-        .then(processCSVContent)
         .catch(error => {
             console.error('Error fetching the file:', error);
         });
@@ -385,9 +379,11 @@ function checkForDefaultGroup(){
     .then(data => {
         console.log(data)
         loadMappings(data)
+        return true;
     })
     .catch(error => {
         console.log("No file found")
+        return false;
     })
     
 }
