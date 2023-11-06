@@ -17,7 +17,7 @@ This application was developed for CIS4951 final project under the leadership of
 
 Lead Developer - [Hunter Sanchez](https://github.com/hunters21)
 Developer - [Adam Kobke](https://github.com/akobke)
-Developer - [Agusto Rodriguez](https://github.com/August0Rod)
+Developer - [Augusto Rodriguez](https://github.com/August0Rod)
 
 ## Instalation
 The installation of UserSync is quite simple if you follow the steps provided
