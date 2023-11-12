@@ -3,7 +3,7 @@
 
 UserSync is the easiest way to manage and sync users in CSV format.
 
-With CSV files generated from Canvas, PantherSoft, and personal Capstone roster files, we can create, modify, and update users and groups based on updated CSV data.
+With CSV files generated from Canvas, or XLSX files generated from PantherSoft and personal Capstone roster files, we can create, modify, and update users and groups based on updated CSV/XLSX data.
 
 ## Table Of Contents
 Click on a link to jump to the section of interest
@@ -60,32 +60,32 @@ In the application you can see a few fields, all of which I will explain
 - Group Mapping CSV
     This is where you would upload your group mapping CSV. These can either be uploaded localy, or uploaded and accessed through NextCloud
 - Input File Source
-    This is where you define the formatting of the CSV file, the options currently supported are
-    - Default (custom to our CIS course)
-    - Canvas
-    - PantherSoft
-    - Cap2 Groups (custom to our CIS course)
+    This is where you define the formatting of the CSV/xlsx file (based on the source), the options currently supported are
+    - Default (.csv file - custom to our CIS course)
+    - Canvas (.csv file)
+    - PantherSoft (.xlsx file)
+    - Cap2 Groups (.xlsx file - custom to our CIS course)
 - CSV Upload
     This is where you upload the CSV containing the user data
 #### Application Usage
 Using the application if both defaults are provided is simple
-    1. Upload the CSV with the Local CSV Upload button (or Nextcloud CSV Upload), and wait for the users to be created (up to 5 minutes for large groups > 700)
+    1. Upload the CSV/XLSX file with the Local File Upload button (or Nextcloud File Upload), and wait for the users to be created (up to 5 minutes for large groups > 700)
 - To use a custom prefix, simply specify the prefix in the ```Group Prefix``` field
 - To use custom mappings, simply local upload, or choose a file from nextcloud, and press the ```Load Mappings``` button
-- If you dont provide any custom mappings, or prefix, the group names are going to be exactly as they are displayed in the original CSV file
+- If you dont provide any custom mappings, the group names are going to be exactly as they are displayed in the original CSV file
 - If you would like to simply update user groups or information, simply upload a new user CSV file
 - If you would like to rename groups, simply reupload a new mappings CSV and press ```Load Mappings```
 
 ## Limitations
-Unfortunately this application has a few limitations that I would like to adress
+Unfortunately this application has a few limitations that I would like to address
 First and foremost, if you are not Prof. Masoud Sadjadi, this application is likely of no use to you.
 
-#### Group prefixes
-- Group Prefixes are required to be 4 characters long, for example FA23 (fall 2023) SM23 (Summer 2023) or SP23 (Spring 2023) You can figure out any other creative use of 4 character long prefixes
 #### Group Renaming
 - Any groups that are created by UserSync can not be renamed if you would like to maintain the ability to remap them at a later date. This is due to how NextCloud handles groups and was not really up to us.
 #### Auto Mapping Uploading
 - Auto Mapping uploading unfortunately won't be a feature. Due to how WebDav and Nextcloud handle same origin HTTP requests this simply was not feasable to do without a proxy server
 #### Default User Passwords
 - Users created with UserSync will have the default password of ```password``` and are able to keep the default password without changing it. This can be a security issue, and it is **STRONGLY** urged to make your users chage their passwords as soon as they log in
+#### File formatting
+- The application assumes that the formatting of each file (Default, Canvas, Panthersoft, or CAP Groups) remains the same over time. Any changes to the file type (.csv to .xlsx or .xlsx to .csv), or the file structure could impact the ability of the application to process those files.
 
