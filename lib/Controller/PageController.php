@@ -165,9 +165,5 @@ class PageController extends Controller {
             return new JSONResponse(['status' => 'error', 'message' => 'Old group not found']);
         }
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> f7e74c0bf68c6d7461384e5a79ab1cd944d307c5
 
 }

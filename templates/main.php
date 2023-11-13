@@ -1,17 +1,8 @@
 <?php
 // SPDX-License-Identifier: AGPL-3.0-or-later
 declare(strict_types=1);
-<<<<<<< HEAD
-//script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
 script('core', 'OC-dialogs');
 script('core', 'jquery.fileupload');
-//script('usersync', 'assets/xlsx.full.min');
-=======
-script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
-script('core', 'OC-dialogs');
-script('core', 'jquery.fileupload');
-script('usersync', 'assets/xlsx.full.min');
->>>>>>> f7e74c0bf68c6d7461384e5a79ab1cd944d307c5
 style('usersync', 'styles');
 script('usersync', 'script');
 ?>
