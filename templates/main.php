@@ -132,7 +132,6 @@ script('usersync', 'script');
 
         <label for="fileFormatSelect">Input File Source</label>
         <select id="fileFormatSelect">
-<<<<<<< HEAD
             <option value="Default">Default (.csv)</option>
             <option value="Canvas">Canvas (.csv)</option>
             <option value="Panthersoft">Panthersoft (.xlsx)</option>
@@ -144,18 +143,6 @@ script('usersync', 'script');
 	    <button type="button" id="selectFileButton">Local Userlist Upload</button>
 	    <button type="button" id="ncBrowseButton">Nextcloud Userlist Upload</button>
         <button id="downloadLogButton">Download Log</button>
-=======
-            <option value="Default">Default</option>
-            <option value="Canvas">Canvas</option>
-            <option value="Panthersoft">Panthersoft</option>
-            <option value="CAP2Groups">CAP2Groups</option>
-        </select>
-
-        <label for="csvFile">Upload CSV:</label>
-        <input type="file" name="csvFile" id="csvFile" accept=".csv">
-	    <button type="button" id="selectFileButton">Local CSV Upload</button>
-	    <button type="button" id="browseButton">Nextcloud CSV Upload</button>
->>>>>>> f7e74c0bf68c6d7461384e5a79ab1cd944d307c5
 
     </form>
     <textarea id="csvOutput"></textarea>
