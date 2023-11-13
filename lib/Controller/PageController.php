@@ -15,6 +15,7 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 
 
+
 class PageController extends Controller {
     
 
@@ -60,7 +61,7 @@ class PageController extends Controller {
                 $group->addUser($user);
             }
 
-            return new JSONResponse(['status' => 'success']);
+            return new JSONResponse(['status' => 'success', 'action' => 'created', 'username' => $username, 'displayName' => $displayName, 'email' => $email, 'groups' => $groups]);
         }else {
             $currentGroups = $groupManager->getUserGroups($existingUser);
             foreach ($currentGroups as $currentGroup) {
@@ -78,7 +79,7 @@ class PageController extends Controller {
 
             }
 
-            return new JSONResponse(['status' => 'success']);
+            return new JSONResponse(['status' => 'success', 'action' => 'updated', 'username' => $username, 'displayName' => $displayName, 'email' => $email, 'groups' => $groups]);
         }
         return new JSONResponse(['status' => 'error', 'message' => 'User already exists']);
     }
@@ -99,6 +100,21 @@ class PageController extends Controller {
             }
         }
 
+        return new JSONResponse(['status' => 'success']);
+    }
+    public function removeAllUsers() {
+        $userManager = \OC::$server->getUserManager();
+        $allUsers = $userManager->search('');
+    
+        foreach ($allUsers as $user) {
+            $username = $user->getUID();
+            // Skip the 'admin' user if it exists
+            if ($username !== 'admin') {
+                // Delete the user
+                $userManager->delete($username);
+            }
+        }
+    
         return new JSONResponse(['status' => 'success']);
     }
         /**
@@ -141,7 +157,7 @@ class PageController extends Controller {
                 // Delete the old group
                 $oldGroup->delete();
 
-                return new JSONResponse(['status' => 'success']);
+                return new JSONResponse(['status' => 'success', 'action' => 'updated', 'oldGroupName' => $oldGroupName, 'newGroupName' => $newGroupName]);
             } else {
                 return new JSONResponse(['status' => 'error', 'message' => 'New group name already exists']);
             }
@@ -149,10 +165,6 @@ class PageController extends Controller {
             return new JSONResponse(['status' => 'error', 'message' => 'Old group not found']);
         }
     }
-    /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-    
-}
 
+
+}

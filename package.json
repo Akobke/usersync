@@ -25,8 +25,13 @@
     "@nextcloud/dialogs": "^3.1.4",
     "@nextcloud/router": "^2.0.0",
     "@nextcloud/vue": "^5.4.0",
+<<<<<<< HEAD
     "vue": "^2.7.0",
     "xlsx": "^0.18.5"
+=======
+    "simple-oauth2": "^5.0.0",
+    "vue": "^2.7.0"
+>>>>>>> 8552f031a664577d095d69219d7db250ca203241
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"

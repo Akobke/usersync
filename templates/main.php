@@ -1,10 +1,10 @@
 <?php
 // SPDX-License-Identifier: AGPL-3.0-or-later
 declare(strict_types=1);
-script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
+//script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
 script('core', 'OC-dialogs');
 script('core', 'jquery.fileupload');
-script('usersync', 'assets/xlsx.full.min');
+//script('usersync', 'assets/xlsx.full.min');
 style('usersync', 'styles');
 script('usersync', 'script');
 ?>
@@ -68,7 +68,7 @@ script('usersync', 'script');
         background-color: #0056b3;
     }
 
-    #browseButton {
+    #ncBrowseButton {
         width: 100%;
         padding: 10px;
         background-color: #008bff;
@@ -99,7 +99,7 @@ script('usersync', 'script');
         transition: background-color 0.3s ease;
     }
 
-    #browseButton: hover {
+    #ncBrowseButton: hover {
         background-color: #0056b3;
     }
     
@@ -134,17 +134,18 @@ script('usersync', 'script');
 
         <label for="fileFormatSelect">Input File Source</label>
         <select id="fileFormatSelect">
-            <option value="Default">Default</option>
-            <option value="Canvas">Canvas</option>
-            <option value="Panthersoft">Panthersoft</option>
-            <option value="CAP2Groups">CAP2Groups</option>
+            <option value="Default">Default (.csv)</option>
+            <option value="Canvas">Canvas (.csv)</option>
+            <option value="Panthersoft">Panthersoft (.xlsx)</option>
+            <option value="CAP2Groups">CAP2Groups (.xlsx)</option>
         </select>
 
-        <label for="csvFile">Upload CSV:</label>
+        <label for="csvFile">Upload CSV/XLSX:</label>
         <input type="file" name="csvFile" id="csvFile" accept=".csv">
-	    <button type="button" id="selectFileButton">Local CSV Upload</button>
-	    <button type="button" id="browseButton">Nextcloud CSV Upload</button>
-        <button type="button" id="defaultsTest">defaultsTest</button>
+	    <button type="button" id="selectFileButton">Local Userlist Upload</button>
+	    <button type="button" id="ncBrowseButton">Nextcloud Userlist Upload</button>
+        <button id="downloadLogButton">Download Log</button>
+
     </form>
     <textarea id="csvOutput"></textarea>
 </div>

@@ -23,6 +23,7 @@ return [
 		['name' => 'page#createUser', 'url' => '/createuser', 'verb' => 'POST'],
 		['name' => 'page#get_groups_csv', 'url' => '/get_groups_csv', 'verb' => 'GET'],
         ['name' => 'page#removeAllGroups', 'url' => '/removeallgroups', 'verb' => 'POST'],
+		['name' => 'page#removeAllUsers', 'url' => '/removeallusers', 'verb' => 'POST'],
 		[
 			'name' => 'page#getAllGroups',
 			'url' => '/getallgroups',
@@ -34,9 +35,15 @@ return [
 			'verb' => 'POST'
 		],
 		[
-			'name' => 'page#getDefaults',
-			'url' => '/getdefaults',
-			'verb' => 'POST'
+			'name' => 'page#getUserAuth',
+			'url' => '/getuserauth',
+			'verb' => 'GET'
+		],
+		[
+		'name' => 'author_api#preflighted_cors',
+		'url' => '/api/1.0/{path}',
+		'verb' => 'OPTIONS',
+		'requirements' => array('path' => '.+')
 		]
 	]
 	
