@@ -207,6 +207,16 @@ function xlsxToCSVString(file, callback) {
     reader.readAsBinaryString(file);
     console.log("[xlsxToCSVString] - File processed");
 }
+function removeAllUsers() {
+    fetch('removeallusers', {
+        method: 'POST'
+    }).then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log("All users (except admin) removed successfully.");
+        }
+    });
+}
 
 async function updateGroupNamesBasedOnMappings() {
     console.log("[updateGroupNameBasedOnMappings] - Executing function...");

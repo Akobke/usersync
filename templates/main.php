@@ -1,10 +1,17 @@
 <?php
 // SPDX-License-Identifier: AGPL-3.0-or-later
 declare(strict_types=1);
+<<<<<<< HEAD
 //script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
 script('core', 'OC-dialogs');
 script('core', 'jquery.fileupload');
 //script('usersync', 'assets/xlsx.full.min');
+=======
+script('core', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js');
+script('core', 'OC-dialogs');
+script('core', 'jquery.fileupload');
+script('usersync', 'assets/xlsx.full.min');
+>>>>>>> f7e74c0bf68c6d7461384e5a79ab1cd944d307c5
 style('usersync', 'styles');
 script('usersync', 'script');
 ?>
@@ -134,6 +141,7 @@ script('usersync', 'script');
 
         <label for="fileFormatSelect">Input File Source</label>
         <select id="fileFormatSelect">
+<<<<<<< HEAD
             <option value="Default">Default (.csv)</option>
             <option value="Canvas">Canvas (.csv)</option>
             <option value="Panthersoft">Panthersoft (.xlsx)</option>
@@ -145,6 +153,18 @@ script('usersync', 'script');
 	    <button type="button" id="selectFileButton">Local Userlist Upload</button>
 	    <button type="button" id="ncBrowseButton">Nextcloud Userlist Upload</button>
         <button id="downloadLogButton">Download Log</button>
+=======
+            <option value="Default">Default</option>
+            <option value="Canvas">Canvas</option>
+            <option value="Panthersoft">Panthersoft</option>
+            <option value="CAP2Groups">CAP2Groups</option>
+        </select>
+
+        <label for="csvFile">Upload CSV:</label>
+        <input type="file" name="csvFile" id="csvFile" accept=".csv">
+	    <button type="button" id="selectFileButton">Local CSV Upload</button>
+	    <button type="button" id="browseButton">Nextcloud CSV Upload</button>
+>>>>>>> f7e74c0bf68c6d7461384e5a79ab1cd944d307c5
 
     </form>
     <textarea id="csvOutput"></textarea>
