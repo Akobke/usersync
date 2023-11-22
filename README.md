@@ -1,14 +1,14 @@
 # UserSync
 ## Easy Nextcloud user management
 
-UserSync is the easiest way to manage and sync users in CSV format.
+UserSync is the easiest way to manage and sync Nextcloud users from FIU student rosters.
 
 With CSV files generated from Canvas, or XLSX files generated from PantherSoft and personal Capstone roster files, we can create, modify, and update users and groups based on updated CSV/XLSX data.
 
 ## Table Of Contents
 Click on a link to jump to the section of interest
 - [Developers](#Developers)
-- [Instalation](#Instalation)
+- [Installation](#Installation)
 - [Usage](#Usage)
 - [Limitations](#Limitations)
 
@@ -19,7 +19,7 @@ Lead Developer - [Hunter Sanchez](https://github.com/hunters21)
 Developer - [Adam Kobke](https://github.com/akobke)
 Developer - [Augusto Rodriguez](https://github.com/August0Rod)
 
-## Instalation
+## Installation
 The installation of UserSync is quite simple if you follow the steps provided
 
 1. SSH Into the server that is running Nextcloud. This can be done in the MacOS terminal, Windows Powershell, or external programs such as PuTTy. Then cd into the directory hosting nextcloud. This directory should be called something like ```Nextcloud-docker-dev```
@@ -53,7 +53,7 @@ For the group CSV, it follows a simple format (fake data)
 Groups are seperated with the ```/``` as a delimitor
 
 #### Application Fields
-![](https://cdn.discordapp.com/attachments/675814289176657940/1170083435390439504/image.png?ex=6557c01e&is=65454b1e&hm=ce7003c1e827c3edfe0febc7e8b7624f89b628ea4b80aff63d77878298c4ab19&)
+![Screenshot 2023-03-19 155755](https://github.com/Akobke/usersync/assets/92694894/bc6af7a3-56cb-4f0e-8588-7038ff2942c1)
 In the application you can see a few fields, all of which I will explain
 - Group Prefix
     This field is where you define the group prefix if you would like to override the default you specify in ```UserSyncConfig```
@@ -61,12 +61,40 @@ In the application you can see a few fields, all of which I will explain
     This is where you would upload your group mapping CSV. These can either be uploaded localy, or uploaded and accessed through NextCloud
 - Input File Source
     This is where you define the formatting of the CSV/xlsx file (based on the source), the options currently supported are
-    - Default (.csv file - custom to our CIS course)
-    - Canvas (.csv file)
-    - PantherSoft (.xlsx file)
-    - Cap2 Groups (.xlsx file - custom to our CIS course)
+  - Default (.csv file - custom to our CIS course, colon deliminated)
+
+|course|number|-|unit|PID|email|first|last|-|major|
+|---|---|---|---|---|---|---|---|---|---|
+|cis|4951|1|u01|6543210|jdoe012@fiu.edu|john|doe|-|engineering - computer science - bs|
+|cis|4951|1|u01|6543211|jdoe013@fiu.edu|jane|doe|-|engineering - computer science - bs/mathematics - mn|
+    
+  - Canvas (.csv file, comma deliminated)
+
+|Last|Other Information(Semi colon deliminated)...|
+|---|---|
+|Doe|John;000000;6543210;jdoe012;...|
+|Doe|Jane;000000;6543211;jdoe013;...|
+    
+  - PantherSoft (.xlsx file, comma deliminated)
+
+
+|-|PID|email|Name|Graded|-|Major|Level|
+|---|---|---|---|---|---|---|---|
+|-|6543210|jdoe012@fiu.edu|Doe,John|Graded|2|Engineering - Computer Science - BS|College Senior|
+|-|6543211|jdoe013@fiu.edu|Doe,Jane|Graded|2|Engineering - Computer Science - BS/Mathematics MN|College Senior|
+
+  - Cap2 Groups (.xlsx file - custom to our CIS course, comma deliminated)
+
+
+|-|-|-|-|-|-|-|email|Name|Field|Course|Extra Info|
+|---|---|---|---|---|---|---|---|---|---|---|---|
+|-|-|-|-|-|-|-|jdoe012@fiu.edu|Doe,John|Computer Science|Capstone II|Usersync App|...|
+|-|-|-|-|-|-|-|jdoe013@fiu.edu|Doe,Jane|Computer Science|Capstone II|Different App|...|
+
 - CSV Upload
     This is where you upload the CSV containing the user data
+- Download Log
+    Downloads all the log information (on the right side) locally to a .txt file.
 #### Application Usage
 Using the application if both defaults are provided is simple
     1. Upload the CSV/XLSX file with the Local File Upload button (or Nextcloud File Upload), and wait for the users to be created (up to 5 minutes for large groups > 700)
@@ -81,11 +109,11 @@ Unfortunately this application has a few limitations that I would like to addres
 First and foremost, if you are not Prof. Masoud Sadjadi, this application is likely of no use to you.
 
 #### Group Renaming
-- Any groups that are created by UserSync can not be renamed if you would like to maintain the ability to remap them at a later date. This is due to how NextCloud handles groups and was not really up to us.
+- Any groups that are created by UserSync can not be renamed from the application itself if you would like to maintain the ability to remap them at a later date. This is due to how NextCloud handles groups and was not really up to us
 #### Auto Mapping Uploading
 - Auto Mapping uploading unfortunately won't be a feature. Due to how WebDav and Nextcloud handle same origin HTTP requests this simply was not feasable to do without a proxy server
 #### Default User Passwords
 - Users created with UserSync will have the default password of ```password``` and are able to keep the default password without changing it. This can be a security issue, and it is **STRONGLY** urged to make your users chage their passwords as soon as they log in
 #### File formatting
-- The application assumes that the formatting of each file (Default, Canvas, Panthersoft, or CAP Groups) remains the same over time. Any changes to the file type (.csv to .xlsx or .xlsx to .csv), or the file structure could impact the ability of the application to process those files.
+- The application assumes that the formatting of each file (Default, Canvas, Panthersoft, or CAP Groups) remains the same over time. Any changes to the file type (.csv to .xlsx or .xlsx to .csv), or the file structure could impact the ability of the application to process those files
 
