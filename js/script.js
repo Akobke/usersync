@@ -412,7 +412,7 @@ function processFile(file, isLocal = true) {
     }
 }
 
-// Event listener for local file selection button
+// Event listener for local userlist file selection button
 document.getElementById('selectFileButton').addEventListener('click', async function() {
     console.log('[selectFileButton] - Local file browse button clicked!');
 
@@ -519,6 +519,13 @@ document.getElementById('loadMappingsButton').addEventListener('click', function
         alert("Please provide a CSV file or have a default group mapping in the UserSyncConfig file")
     }
 });
+
+// Event listener for local mapping file selection button
+document.getElementById('selectLocalMappingsButton').addEventListener('click', async function() {
+    const originalFileInput = document.getElementById('groupMappingFile');
+    originalFileInput.click();
+});
+
 
 // Load mappings from Nextcloud file event listener
 document.getElementById('ncLoadMappingsButton').addEventListener('click', function() {

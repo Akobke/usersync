@@ -19,10 +19,11 @@ script('usersync', 'script');
     
     .container {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         height: 100%;
+        width: 100%;
     }
 
     
@@ -32,6 +33,15 @@ script('usersync', 'script');
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
+        width: 50%;
+    }
+
+    #csvUploadForm hr {
+        border: 0; /* Removes default border */
+        height: 2px; /* Increase the height for a thicker line */
+        background-color: #ccc; /* Set the line color */
+        margin-top: 10px; /* Spacing above the line */
+        margin-bottom: 10px; /* Spacing below the line */
     }
 
     
@@ -66,10 +76,25 @@ script('usersync', 'script');
         background-color: #0056b3;
     }
 
+    #selectLocalMappingsButton {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #groupMappingFile {
+        display: none;
+    }
+
     #ncBrowseButton {
         width: 100%;
         padding: 10px;
-        background-color: #008bff;
+        background-color: #007bff;
         color: #fff;
         border: none;
         border-radius: 5px;
@@ -80,6 +105,7 @@ script('usersync', 'script');
     #ncLoadMappingsButton {
         width: 100%;
         padding: 10px;
+        background-color: #007bff;
         color: #fff;
         border: none;
         border-radius: 5px;
@@ -92,7 +118,7 @@ script('usersync', 'script');
         padding: 10px;
         color: #fff;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
@@ -102,12 +128,12 @@ script('usersync', 'script');
     }
     
     #csvOutput {
-        width: 100%;
+        height: 550px;
         flex: 1;
         padding: 10px;
         border: none;
         border-radius: 0;
-        background-color: #000;
+        background-color: rgba(0, 0, 0, 0.75);
         color: #fff;
         resize: none; 
     }
@@ -126,9 +152,11 @@ script('usersync', 'script');
         
         <label for="groupMappingFile">Upload Group Mappings CSV:</label>
         <input type="file" name="groupMappingFile" id="groupMappingFile" accept=".csv">
-        
+        <button type="button" id="selectLocalMappingsButton">Local Mappings Upload</button>
         <button type="button" id="ncLoadMappingsButton">Nextcloud Mapping Upload</button>
         <button type="button" id="loadMappingsButton">Load Mappings</button>
+
+        <hr>
 
         <label for="fileFormatSelect">Input File Source</label>
         <select id="fileFormatSelect">
