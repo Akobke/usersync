@@ -279,10 +279,10 @@ function loadMappings(content){
     //alert('Group mappings loaded successfully!');
 }
 
-function checkForDefaultGroup(){
+async function checkForDefaultGroup(){
     //getUserAuth();
     console.log("[checkDefaultGroup] - Searching for default group...");
-    fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'))
+    await fetch(OC.linkToRemoteBase('files' + '/UserSyncConfig/groupmapping.csv'))
     .then(response => response.text())
     .then(data => {
         console.log("[checkDefaultGroup] - Default group found!");
@@ -409,7 +409,7 @@ document.getElementById('selectFileButton').addEventListener('click', async func
     // Create a hidden file input element
     const fileInput = document.createElement('input');
 
-    if(!userUploadedMappings){
+    if(!userUploadedMappings) {
         checkForDefaultGroup();
     }
 
@@ -471,8 +471,6 @@ document.getElementById('ncBrowseButton').addEventListener('click', async functi
     }, false, ["text/csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"], true);
 });
 
-
-
 // File format button event listener
 document.addEventListener('DOMContentLoaded', (event) => {
     const fileFormatDropdown = document.getElementById('fileFormatSelect');
@@ -486,7 +484,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 // Load mappings from local file button event listener
-document.getElementById('loadMappingsButton').addEventListener('click', function() {
+document.getElementById('loadMappingsButton').addEventListener('click', async function() {
     console.log("[Mappings Event Listener] - Load mappings button clicked!");
     const fileInput = document.getElementById('groupMappingFile');
     const file = fileInput.files[0];
